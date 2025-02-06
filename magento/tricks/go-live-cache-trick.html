@@ -1,0 +1,22 @@
+<!--
+title: Go-live - Product Cache Image Trick
+description: Quando la tua necessità è quella di andare subito online ma il sito ha tante immagini e non vengono generate in tempo.
+published: true
+date: 2025-02-06T21:36:59.935Z
+tags: magento, cache, go-live
+editor: ckeditor
+dateCreated: 2025-02-06T09:25:55.184Z
+-->
+
+<p>Questo trick può essere particolarmente utile a chi ha la necessità di portare live un sito Magento 2, ma non può farlo subito perché le immagini in cache ancora devono essere rigenerate.</p>
+<p>Il sito in quel caso si presenterebbe senza immagini in catalogo e probabilmente nelle thumb di widget come carousel di prodotti.</p>
+<p>&nbsp;</p>
+<p>Anche se banale come trick non è così scontato..<br>Considerando che le immagini in cache hanno una struttura simile a https://{domain}/media/catalog/product/cache/{hash}/path/to/{image_name}.jpg<br>la cosa più rapida e immediata da fare, in attesa che tutte le immagini vengano rigenerate è quella di aggiungere una regola di rewrite al server.</p>
+<p>Per poter fare questa operazione basta identificare il tipo di server che stiamo utilizzando, nel mio esempio porterò il più comune di Magento 2, un Apache che ha la possibilità di applicare modifiche di riscrittura direttamente nel file .htaccess posizionato nella cartella pub.</p>
+<p>Accediamo al file e aggiungiamo subito dopo la regola di RewriteEngine on, dove lo riteniamo opportuno la seguente regola:</p>
+<pre><code class="language-plaintext"># Rimuove la parte "cache/{hash}/" dall'URL
+RewriteRule ^media/catalog/product/cache/[0-9a-f]+/(.*)$ /media/catalog/product/$1 [R=301,L]</code></pre>
+<p>in questo modo andremo a modificare il puntamento che ha il link cache, all'immagine reale.</p>
+<p>Ricordiamoci però che questa soluzione non deve essere applicata in modo definitivo, ma deve essere un tampone alla momentanea indisponibilità delle immagini in cache, che inizieremo a generare sin da subito, ma avremo comunque la possibilità di portare online il nostro sito con limitazione punteggio su internet.</p>
+<p>Le immagini generate infatti hanno una dimensione che viene definita nel file view.xml e tali dimensioni sono adattate perfettamente ai vari punti del sito.<br>Andando a fare una forzatura del suo naturale funzionamento tendiamo a mostrare le immagini di un'unica dimensione abbassando notevolmente il puntaggio di page speed.</p>
+<p>Spiegato il trick e fatto le giuste premesse e attenzioni, vi auguro un buon Go-Live.</p>
